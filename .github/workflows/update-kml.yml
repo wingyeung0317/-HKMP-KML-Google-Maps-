@@ -15,6 +15,7 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         fetch-depth: 0
+        ref: Automatic  # 明確指定分支
       
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -27,16 +28,19 @@ jobs:
         pip install requests
         
     - name: Run toKML.py
-      run: |
-        git pull origin main
-        python toKML.py
+      run: python toKML.py
       
     - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
+        git pull origin Automatic --rebase
         git add motorcycleParking.kml
-        git diff --staged --quiet || git commit -m "Auto-update KML file $(date)"
-        git push origin main
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Auto-update KML file $(date)"
+          git push origin Automatic
+        fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
