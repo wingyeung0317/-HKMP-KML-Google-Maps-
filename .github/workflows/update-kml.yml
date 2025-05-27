@@ -1,9 +1,9 @@
 name: Update KML File
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 19 * * *'
-  workflow_dispatch: # 允許手動觸發
 
 jobs:
   update-kml:
